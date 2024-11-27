@@ -478,8 +478,8 @@ function main()
     NT = L
     NC = 2
     #@time UN_test_3D(NX,NY,NT,NC)
-    @time UN_map_3D(NX,NY,NT,NC)
-    #@time UN_map_Random_3D(NX,NY,NT,NC)
+    #@time UN_map_3D(NX,NY,NT,NC)
+    @time UN_map_Random_3D(NX,NY,NT,NC)
 end
 main()
 
