@@ -344,7 +344,7 @@ function UN_map_Random_3D(NX,NY,NT,NC)
 
     println("L=$L, eps=$eps,flow=$(eps*flow_number)")
 
-    random_eps = 0.5
+    random_eps = 0.8
     println("Random noise: size=$(random_eps)")
     
     w = zeros(Float64, n, Int(flow_number/step)+1)
@@ -471,7 +471,7 @@ end
 
 
 function main()
-    L = 20
+    L = 10
     
     NX = L
     NY = L
