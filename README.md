@@ -9,5 +9,6 @@ where g is a smooth map: X -> U(N).
 To this end, we utilize a Julia repository, o-morikawa/Gaugefields.jl,
 and formulate a gradient-flow method even on a course lattice.
 
-- gf_wind: main function on Julia (o-morikawa/Gaugefields.jl), datas, and simple figures
+- src: main function on Julia (o-morikawa/Gaugefields.jl)
+- output: data and simple figures
 - m_nb: Mathematica notebooks for small lattice size
