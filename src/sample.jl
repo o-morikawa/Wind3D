@@ -8,7 +8,7 @@ using Wilsonloop
 
 using Plots
 
-function UN_test_3D(NX,NY,NT,NC)
+function UN_test_3D(NX,NY,NT,NC, η)
 
     Dim = 3
     L = NX
@@ -16,12 +16,31 @@ function UN_test_3D(NX,NY,NT,NC)
     n = 20
     println("Test random configuration: n=$n")
 
+    #=
     eps = 0.001
     flow_number = 60000
     step = 100
+    =#
+    eps = 0.01
+    if L==10
+        flow_number = 4000
+    elseif L==20
+        flow_number = 8000
+    elseif L==30
+        flow_number = 16000
+    elseif L==40
+        flow_number = 27000
+    elseif L==50
+        flow_number = 42000
+    end
+    step = 10
     println("L=$L, eps=$eps,flow=$(eps*flow_number)")
 
+    eta = η
+    println("eta: $eta")
+
     w = zeros(Float64, n, Int(flow_number/step)+1)
+    wh =zeros(Float64, n, Int(flow_number/step)+1)
     s = zeros(Float64, n, Int(flow_number/step)+1)
     d = zeros(ComplexF64, n, Int(flow_number/step)+1)
 
@@ -53,14 +72,16 @@ function UN_test_3D(NX,NY,NT,NC)
 
         println(winding_UN_3D(U,temps))
 
-        g = Gradientflow_3D(U, eps=eps)
+        g = Gradientflow_eta_3D(U, eta, eps=eps)
         flownumber = flow_number
 
         j = 1
         W = winding_UN_3D(U,temps)
-        S = calc_gdgaction_3D(U,temps)
+        Wh =winding_UN_3D(U,1,temps)
+        S = calc_gdgaction_3D(U,eta,temps)
         D = det_unitary(U)
         w[i,j] = W
+        wh[i,j] =Wh
         s[i,j] = S
         d[i,j] = D[1,1,1]
 
@@ -69,9 +90,11 @@ function UN_test_3D(NX,NY,NT,NC)
             if iflow%step==0
                 j += 1
                 W = winding_UN_3D(U,temps)
-                S = calc_gdgaction_3D(U,temps)
+                Wh =winding_UN_3D(U,1,temps)
+                S = calc_gdgaction_3D(U,eta,temps)
                 D = det_unitary(U)
                 w[i,j] = W
+                wh[i,j] =Wh
                 s[i,j] = S
                 d[i,j] = D[1,1,1]
             end
@@ -83,7 +106,7 @@ function UN_test_3D(NX,NY,NT,NC)
     flow = 0:(eps*step):(eps*flow_number)
     lt = length(flow)
 
-    open("./wind.csv", "w") do f
+    open("./wind_test_L$(L)_eta$(eta).csv", "w") do f
         write(f, "flowtime, ")
         for i = 1:(n-1)
             write(f, "w$i, ")
@@ -101,9 +124,29 @@ function UN_test_3D(NX,NY,NT,NC)
     for i = 2:n
         plot!(plt, flow, w[i,:])
     end
-    savefig("wind.png")
+    savefig("wind_test_L$(L)_eta$(eta).png")
     
-    open("./action.csv", "w") do f
+    open("./wind_H_test_L$(L)_eta$(eta).csv", "w") do f
+        write(f, "flowtime, ")
+        for i = 1:(n-1)
+            write(f, "wh$i, ")
+        end
+        write(f, "wh$n\n")
+        for it = 1:lt
+            write(f, "$(flow[it]), ")
+            for i = 1:(n-1)
+                write(f, "$(wh[i,it]), ")
+            end
+            write(f, "$(wh[n,it])\n")
+        end
+    end
+    plt = plot(flow, wh[1,:], label="m=$(get_mass(1))")
+    for i = 2:n
+        plot!(plt, flow, wh[i,:], label="m=$(get_mass(i))")
+    end
+    savefig("wind_H_test_L$(L)_eta$(eta).png")
+    
+    open("./action_test_L$(L)_eta$(eta).csv", "w") do f
         write(f, "flowtime, ")
         for i = 1:(n-1)
             write(f, "s$i, ")
@@ -121,9 +164,9 @@ function UN_test_3D(NX,NY,NT,NC)
     for i = 2:n
         plot!(plt, flow, s[i,:])
     end
-    savefig("action.png")
+    savefig("action_test_L$(L)_eta$(eta).png")
     
-    open("./det.csv", "w") do f
+    open("./det_test_L$(L)_eta$(eta).csv", "w") do f
         write(f, "flowtime, ")
         for i = 1:(n-1)
             write(f, "d$i, ")
@@ -141,12 +184,12 @@ function UN_test_3D(NX,NY,NT,NC)
     for i = 2:n
         plot!(plt, flow, real(d[i,:]))
     end
-    savefig("det_re.png")
+    savefig("det_test_re_L$(L)_eta$(eta).png")
     plt = plot(flow, imag(d[1,:]))
     for i = 2:n
         plot!(plt, flow, imag(d[i,:]))
     end
-    savefig("det_im.png")
+    savefig("det_test_im_L$(L)_eta$(eta).png")
 
 end
 
@@ -315,12 +358,12 @@ function UN_map_3D(NX,NY,NT,NC)
     savefig("det_map_im_L$(L).png")
 
 end
-function UN_map_Random_3D(NX,NY,NT,NC)
+function UN_map_Random_3D(NX,NY,NT,NC,η,rε)
 
     Dim = 3
     L = NX
 
-    println("Test mapping configuration (Random noise)")
+    println("Test mapping configuration (Random noise and improved action)")
     n = 3
 
     #=
@@ -344,10 +387,14 @@ function UN_map_Random_3D(NX,NY,NT,NC)
 
     println("L=$L, eps=$eps,flow=$(eps*flow_number)")
 
-    random_eps = 0.05
+    random_eps = rε
     println("Random noise: size=$(random_eps)")
     
+    eta = η
+    println("eta: $eta")
+    
     w = zeros(Float64, n, Int(flow_number/step)+1)
+    wh =zeros(Float64, n, Int(flow_number/step)+1)
     s = zeros(Float64, n, Int(flow_number/step)+1)
     d = zeros(ComplexF64, n, Int(flow_number/step)+1)
 
@@ -372,14 +419,16 @@ function UN_map_Random_3D(NX,NY,NT,NC)
 
         println(winding_UN_3D(U,temps))
 
-        g = Gradientflow_TA_3D(U, eps=eps)
+        g = Gradientflow_TA_eta_3D(U, eta, eps=eps)
         flownumber = flow_number
  
         j = 1
         W = winding_UN_3D(U,temps)
-        S = calc_gdgaction_3D(U,temps)
+        Wh =winding_UN_3D(U,1,temps)
+        S = calc_gdgaction_3D(U,eta,temps)
         D = det_unitary(U)
         w[i,j] = W
+        wh[i,j] =Wh
         s[i,j] = S
         d[i,j] = D[1,1,1]
 
@@ -388,9 +437,11 @@ function UN_map_Random_3D(NX,NY,NT,NC)
             if iflow%step==0
                 j += 1
                 W = winding_UN_3D(U,temps)
-                S = calc_gdgaction_3D(U,temps)
+                Wh =winding_UN_3D(U,1,temps)
+                S = calc_gdgaction_3D(U,eta,temps)
                 D = det_unitary(U)
                 w[i,j] = W
+                wh[i,j] =Wh
                 s[i,j] = S
                 d[i,j] = D[1,1,1]
             end
@@ -402,7 +453,7 @@ function UN_map_Random_3D(NX,NY,NT,NC)
     flow = 0:(eps*step):(eps*flow_number)
     lt = length(flow)
 
-    open("./wind_map_L$(L)_Rand$(random_eps).csv", "w") do f
+    open("./wind_map_L$(L)_eta$(eta)_Rand$(random_eps).csv", "w") do f
         write(f, "flowtime, ")
         for i = 1:(n-1)
             write(f, "w$i, ")
@@ -420,9 +471,29 @@ function UN_map_Random_3D(NX,NY,NT,NC)
     for i = 2:n
         plot!(plt, flow, w[i,:], label="m=$(get_mass(i))")
     end
-    savefig("wind_map_L$(L)_Rand$(random_eps).png")
+    savefig("wind_map_L$(L)_eta$(eta)_Rand$(random_eps).png")
     
-    open("./action_map_L$(L)_Rand$(random_eps).csv", "w") do f
+    open("./wind_H_map_L$(L)_eta$(eta)_Rand$(random_eps).csv", "w") do f
+        write(f, "flowtime, ")
+        for i = 1:(n-1)
+            write(f, "wh$i, ")
+        end
+        write(f, "wh$n\n")
+        for it = 1:lt
+            write(f, "$(flow[it]), ")
+            for i = 1:(n-1)
+                write(f, "$(wh[i,it]), ")
+            end
+            write(f, "$(wh[n,it])\n")
+        end
+    end
+    plt = plot(flow, wh[1,:], label="m=$(get_mass(1))")
+    for i = 2:n
+        plot!(plt, flow, wh[i,:], label="m=$(get_mass(i))")
+    end
+    savefig("wind_H_map_L$(L)_eta$(eta)_Rand$(random_eps).png")
+    
+    open("./action_map_L$(L)_eta$(eta)_Rand$(random_eps).csv", "w") do f
         write(f, "flowtime, ")
         for i = 1:(n-1)
             write(f, "s$i, ")
@@ -440,9 +511,9 @@ function UN_map_Random_3D(NX,NY,NT,NC)
     for i = 2:n
         plot!(plt, flow, s[i,:], label="m=$(get_mass(i))")
     end
-    savefig("action_map_L$(L)_Rand$(random_eps).png")
+    savefig("action_map_L$(L)_eta$(eta)_Rand$(random_eps).png")
     
-    open("./det_map_L$(L)_Rand$(random_eps).csv", "w") do f
+    open("./det_map_L$(L)_eta$(eta)_Rand$(random_eps).csv", "w") do f
         write(f, "flowtime, ")
         for i = 1:(n-1)
             write(f, "d$i, ")
@@ -460,15 +531,15 @@ function UN_map_Random_3D(NX,NY,NT,NC)
     for i = 2:n
         plot!(plt, flow, real(d[i,:]), label="m=$(get_mass(i))")
     end
-    savefig("det_map_re_L$(L)_Rand$(random_eps).png")
+    savefig("det_map_re_L$(L)_eta$(eta)_Rand$(random_eps).png")
     plt = plot(flow, imag(d[1,:]), label="m=$(get_mass(1))")
     for i = 2:n
         plot!(plt, flow, imag(d[i,:]), label="m=$(get_mass(i))")
     end
-    savefig("det_map_im_L$(L)_Rand$(random_eps).png")
+    savefig("det_map_im_L$(L)_eta$(eta)_Rand$(random_eps).png")
 
 end
-function UN_map_eta_3D(NX,NY,NT,NC)
+function UN_map_eta_3D(NX,NY,NT,NC,η)
 
     Dim = 3
     L = NX
@@ -497,10 +568,11 @@ function UN_map_eta_3D(NX,NY,NT,NC)
 
     println("L=$L, eps=$eps,flow=$(eps*flow_number)")
 
-    eta = -20
+    eta = η
     println("eta: $eta")
     
     w = zeros(Float64, n, Int(flow_number/step)+1)
+    wh =zeros(Float64, n, Int(flow_number/step)+1)
     s = zeros(Float64, n, Int(flow_number/step)+1)
     d = zeros(ComplexF64, n, Int(flow_number/step)+1)
 
@@ -528,9 +600,11 @@ function UN_map_eta_3D(NX,NY,NT,NC)
 
         j = 1
         W = winding_UN_3D(U,temps)
+        Wh =winding_UN_3D(U,1,temps)
         S = calc_gdgaction_3D(U,eta,temps)
         D = det_unitary(U)
         w[i,j] = W
+        wh[i,j] =Wh
         s[i,j] = S
         d[i,j] = D[1,1,1]
 
@@ -539,9 +613,11 @@ function UN_map_eta_3D(NX,NY,NT,NC)
             if iflow%step==0
                 j += 1
                 W = winding_UN_3D(U,temps)
+                Wh =winding_UN_3D(U,1,temps)
                 S = calc_gdgaction_3D(U,eta,temps)
                 D = det_unitary(U)
                 w[i,j] = W
+                wh[i,j] =Wh
                 s[i,j] = S
                 d[i,j] = D[1,1,1]
             end
@@ -572,6 +648,26 @@ function UN_map_eta_3D(NX,NY,NT,NC)
         plot!(plt, flow, w[i,:], label="m=$(get_mass(i))")
     end
     savefig("wind_map_L$(L)_eta$(eta).png")
+    
+    open("./wind_H_map_L$(L)_eta$(eta).csv", "w") do f
+        write(f, "flowtime, ")
+        for i = 1:(n-1)
+            write(f, "wh$i, ")
+        end
+        write(f, "wh$n\n")
+        for it = 1:lt
+            write(f, "$(flow[it]), ")
+            for i = 1:(n-1)
+                write(f, "$(wh[i,it]), ")
+            end
+            write(f, "$(wh[n,it])\n")
+        end
+    end
+    plt = plot(flow, wh[1,:], label="m=$(get_mass(1))")
+    for i = 2:n
+        plot!(plt, flow, wh[i,:], label="m=$(get_mass(i))")
+    end
+    savefig("wind_H_map_L$(L)_eta$(eta).png")
     
     open("./action_map_L$(L)_eta$(eta).csv", "w") do f
         write(f, "flowtime, ")
@@ -622,18 +718,22 @@ end
 
 
 function main()
-    L = 20
+    L = 10
     
     NX = L
     NY = L
     NT = L
     NC = 2
-    #@time UN_test_3D(NX,NY,NT,NC)
+
+    η = -20
+    rε = 0.1
+    
+    @time UN_test_3D(NX,NY,NT,NC,10)
+    @time UN_test_3D(NX,NY,NT,NC,2)
+    @time UN_test_3D(NX,NY,NT,NC,-10)
+    @time UN_test_3D(NX,NY,NT,NC,-20)
     #@time UN_map_3D(NX,NY,NT,NC)
-    #@time UN_map_Random_3D(NX,NY,NT,NC)
-    @time UN_map_eta_3D(NX,NY,NT,NC)
+    #@time UN_map_Random_3D(NX,NY,NT,NC,η,rε)
+    #@time UN_map_eta_3D(NX,NY,NT,NC,η)
 end
 main()
-
-
-
