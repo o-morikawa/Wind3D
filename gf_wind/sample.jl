@@ -497,7 +497,7 @@ function UN_map_eta_3D(NX,NY,NT,NC)
 
     println("L=$L, eps=$eps,flow=$(eps*flow_number)")
 
-    eta = -10
+    eta = -5
     println("eta: $eta")
     
     w = zeros(Float64, n, Int(flow_number/step)+1)
