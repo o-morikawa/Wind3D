@@ -14,6 +14,8 @@ and formulate a gradient-flow method even on a course lattice.
 - m_nb: Mathematica notebooks for small lattice size
 
 ## Sample code
+Use o-morikawa/Gaugefields.jl instead of the official repository, Gaugefields.jl.
+
 ```julia
 using Random
 using Gaugefields
