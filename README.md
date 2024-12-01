@@ -73,7 +73,7 @@ function UN_test_3D(NX,NY,NT,NC,η;λ=1,rε=0.1)
             U = Initialize_3D_UN_Gaugefields(
                 NC,NX,NY,NT,
                 condition = "test_map_rand",
-                m = get_mass(i),
+                m = -1,
                 randomnumber="Random",
                 reps = rand_eps,
             )
