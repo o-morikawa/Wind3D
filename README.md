@@ -1,4 +1,4 @@
-# WindSchiff
+# Wind3D
 
 We consider the winding number on numerical simulations.
 We propose an effective approach to give an approximate integer for
