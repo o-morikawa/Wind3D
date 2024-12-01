@@ -90,7 +90,6 @@ function UN_test_3D(NX,NY,NT,NC,η;λ=1,rε=0.1)
         end
         flownumber = flow_number
 
-        j = 1
         W = winding_UN_3D(U,temps)
         Wh =winding_UN_3D(U,1,temps)
         S = calc_gdgaction_3D(U,eta,temps)
@@ -102,7 +101,6 @@ function UN_test_3D(NX,NY,NT,NC,η;λ=1,rε=0.1)
         for iflow = 1:flownumber
             flow!(U, g)
             if iflow%step==0
-                j += 1
                 W = winding_UN_3D(U,temps)
                 Wh =winding_UN_3D(U,1,temps)
                 S = calc_gdgaction_3D(U,eta,temps)
