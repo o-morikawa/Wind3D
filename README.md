@@ -12,3 +12,104 @@ and formulate a gradient-flow method even on a course lattice.
 - src: main function on Julia (o-morikawa/Gaugefields.jl)
 - output: data and simple figures
 - m_nb: Mathematica notebooks for small lattice size
+
+## Sample code
+```julia
+using Random
+using Gaugefields
+using LinearAlgebra
+using Wilsonloop
+
+using Plots
+
+function UN_test_3D(NX,NY,NT,NC,η;λ=1,rε=0.1)
+
+    Dim = 3
+    L = NX
+
+    n = 4
+    println("Run Configurations: n=$n")
+
+    eps = 0.01
+    flow_number = 6000
+    step = 10
+    println("L=$L, eps=$eps,flow=$(eps*flow_number)")
+
+    eta = η
+    randscale = λ
+    rand_eps = rε
+    println("eta: $eta,  randscale: $randscale,  rand_eps: $(rand_eps)")
+
+    for i = 1:n
+
+        Random.seed!(123)
+
+        if i == 1
+            U = Initialize_3D_UN_Gaugefields(
+                NC,NX,NY,NT,
+                condition = "cold",
+                randomnumber="Random"
+            )
+        elseif i == 2
+            U = Initialize_3D_UN_Gaugefields(
+                NC,NX,NY,NT,
+                condition = "hot",
+                randomnumber="Random",
+                randscale=randscale,
+            )
+        elseif i == 3
+            U = Initialize_3D_UN_Gaugefields(
+                NC,NX,NY,NT,
+                condition = "test_map",
+                m = -1, # -1, 1, 3, 5, 7
+            )
+        elseif i == 4
+            U = Initialize_3D_UN_Gaugefields(
+                NC,NX,NY,NT,
+                condition = "test_map_rand",
+                m = get_mass(i),
+                randomnumber="Random",
+                reps = rand_eps,
+            )
+        end
+        println(typeof(U))
+
+        temps = Temporalfields(U, num=9)
+        println(typeof(temps))
+
+        println(winding_UN_3D(U,temps))
+
+        if i==1 || i==2
+            g = Gradientflow_eta_3D(U, eta, eps=eps)
+        else
+            g = Gradientflow_TA_eta_3D(U, eta, eps=eps)
+        end
+        flownumber = flow_number
+
+        j = 1
+        W = winding_UN_3D(U,temps)
+        Wh =winding_UN_3D(U,1,temps)
+        S = calc_gdgaction_3D(U,eta,temps)
+        D = det_unitary(U)
+
+        println("flow time: 0")
+        println("W=$(W), Wh=$(Wh), S=$(S), Det=$(D)")
+
+        for iflow = 1:flownumber
+            flow!(U, g)
+            if iflow%step==0
+                j += 1
+                W = winding_UN_3D(U,temps)
+                Wh =winding_UN_3D(U,1,temps)
+                S = calc_gdgaction_3D(U,eta,temps)
+                D = det_unitary(U)
+                println("flow time: $(iflow*eps)")
+                println("W=$(W), Wh=$(Wh), S=$(S), Det=$(D)")
+            end
+        end
+    end
+
+end
+
+
+```
