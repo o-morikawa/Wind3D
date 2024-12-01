@@ -45,12 +45,14 @@ function UN_test_3D(NX,NY,NT,NC,η;λ=1,rε=0.1)
         Random.seed!(123)
 
         if i == 1
+            println("Configuration 1: Cold start")
             U = Initialize_3D_UN_Gaugefields(
                 NC,NX,NY,NT,
                 condition = "cold",
                 randomnumber="Random"
             )
         elseif i == 2
+            println("Configuration 2: Hot start")
             U = Initialize_3D_UN_Gaugefields(
                 NC,NX,NY,NT,
                 condition = "hot",
@@ -58,12 +60,14 @@ function UN_test_3D(NX,NY,NT,NC,η;λ=1,rε=0.1)
                 randscale=randscale,
             )
         elseif i == 3
+            println("Configuration 3: Test mapping as T^3->SU(2)")
             U = Initialize_3D_UN_Gaugefields(
                 NC,NX,NY,NT,
                 condition = "test_map",
                 m = -1, # -1, 1, 3, 5, 7
             )
         elseif i == 4
+            println("Configuration 4: Test mapping as T^3->SU(2) with Random noise")
             U = Initialize_3D_UN_Gaugefields(
                 NC,NX,NY,NT,
                 condition = "test_map_rand",
