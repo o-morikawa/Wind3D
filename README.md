@@ -22,8 +22,6 @@ using Gaugefields
 using LinearAlgebra
 using Wilsonloop
 
-using Plots
-
 function UN_test_3D(NX,NY,NT,NC,η;λ=1,rε=0.1)
 
     Dim = 3
