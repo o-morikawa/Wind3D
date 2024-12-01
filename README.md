@@ -115,5 +115,15 @@ function UN_test_3D(NX,NY,NT,NC,η;λ=1,rε=0.1)
 
 end
 
+function main()
+    NX = 20
+    NY = 20
+    NT = 20
+    NC = 2
+
+    η = 1
+    @time UN_test_3D(NX,NY,NT,NC,η,λ=5,rε=0.5)
+end
+main()
 
 ```
