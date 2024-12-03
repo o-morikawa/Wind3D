@@ -547,7 +547,7 @@ function UN_map_MassRandom_3D(NX,NY,NT,NC,mass_num,η)
     L = NX
 
     println("Test mapping configuration (Random noise and improved action)")
-    n = 20
+    n = 15
     println("Mass: m$(mass_num)")
 
     #=
@@ -909,8 +909,8 @@ function main()
     NT = L
     NC = 2
 
-    mnum=1
-    η = 0
+    mnum=3
+    η = -10
     rε = 0.1
     
     #@time UN_test_3D(NX,NY,NT,NC,10,λ=5)
@@ -918,6 +918,7 @@ function main()
     #@time UN_map_Random_3D(NX,NY,NT,NC,η,rε)
     #@time UN_map_eta_3D(NX,NY,NT,NC,η)
     #@time UN_map_MassRandom_3D(NX,NY,NT,NC,mnum,η)
+    @time UN_map_MassRandom_3D(NX,NY,NT,NC,mnum,η)
 end
 main()
 
