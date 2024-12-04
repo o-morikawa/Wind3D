@@ -9,8 +9,16 @@ where g is a smooth map: X -> U(N).
 To this end, we utilize a Julia repository, [o-morikawa/Gaugefields.jl](https://github.com/o-morikawa/Gaugefields.jl),
 and formulate a gradient-flow method even on a course lattice.
 
+We use the following terminologies: "map": Mapping function from T^3 to SU(N), "test": Random unitary matrices for T^3->U(N)
+
 - src: main function which runs on [o-morikawa/Gaugefields.jl](https://github.com/o-morikawa/Gaugefields.jl)
 - output: data and simple figures
+    - action: flow-time dependence of lattice action, which is a monotonically decreasing function
+    - det: flow-time dependence of determinant of configurations
+    - msearch: m (a param of "map" case) dependence of lattice action
+    - wind: flow-time dependence of winding number
+        - with "H": lattice improvement for $gd^3g$
+        - no "H": naive lattice definition of winding number
 - m_nb: Mathematica notebooks for small lattice size
 
 ## Sample code
