@@ -6,15 +6,15 @@ We propose an effective approach to give an approximate integer for
 \int \tr(g^{-1}dg)^{3},
 ```
 where g is a smooth map: X -> U(N).
-To this end, we utilize a Julia repository, o-morikawa/Gaugefields.jl,
+To this end, we utilize a Julia repository, [o-morikawa/Gaugefields.jl](https://github.com/o-morikawa/Gaugefields.jl),
 and formulate a gradient-flow method even on a course lattice.
 
-- src: main function on Julia (o-morikawa/Gaugefields.jl)
+- src: main function which runs on [o-morikawa/Gaugefields.jl](https://github.com/o-morikawa/Gaugefields.jl)
 - output: data and simple figures
 - m_nb: Mathematica notebooks for small lattice size
 
 ## Sample code
-Use o-morikawa/Gaugefields.jl instead of the official repository, Gaugefields.jl.
+Use o-morikawa/Gaugefields.jl instead of the official repository, [Gaugefields.jl](https://github.com/akio-tomiya/Gaugefields.jl).
 
 ```julia
 using Random
