@@ -9,8 +9,11 @@ where $g$ is a smooth map: $X \to U(N)$.
 To this end, we utilize a Julia repository, [o-morikawa/Gaugefields.jl](https://github.com/o-morikawa/Gaugefields.jl),
 and formulate a gradient-flow method even on a course lattice.
 
-We use the following terminologies: "map": Mapping function from $T^3$ to $SU(N)$, "test": Random unitary matrices for $T^3\to U(N)$.
+We use the following terminologies:
+- "map": Mapping function from $T^3$ to $SU(N)$ (See [hep-lat/0208057](https://arxiv.org/abs/hep-lat/0208057))
+- "test": Random unitary matrices for $T^3\to U(N)$
 
+Each directory contains
 - src: main function which runs on [o-morikawa/Gaugefields.jl](https://github.com/o-morikawa/Gaugefields.jl)
 - output: data and simple figures
     - action: flow-time dependence of lattice action, which is a monotonically decreasing function
