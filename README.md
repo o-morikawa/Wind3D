@@ -21,6 +21,8 @@ We use the following terminologies: "map": Mapping function from $T^3$ to $SU(N)
         - no "H": naive lattice definition of winding number
 - m_nb: Mathematica notebooks for small lattice size
 
+A parameter, $\eta$, is introduced for lattice improvement as [arXiv:2412.xxxxx](https://arxiv.org/abs/2412.xxxxx).
+
 ## Sample code
 Use o-morikawa/Gaugefields.jl instead of the official repository, [Gaugefields.jl](https://github.com/akio-tomiya/Gaugefields.jl).
 
