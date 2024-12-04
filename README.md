@@ -5,7 +5,7 @@ We propose an effective approach to give an approximate integer for
 ```math
 \int \tr(g^{-1}dg)^{3},
 ```
-where g is a smooth map: X -> U(N).
+where $g$ is a smooth map: $X \to U(N)$.
 To this end, we utilize a Julia repository, [o-morikawa/Gaugefields.jl](https://github.com/o-morikawa/Gaugefields.jl),
 and formulate a gradient-flow method even on a course lattice.
 
