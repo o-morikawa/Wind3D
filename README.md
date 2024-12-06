@@ -1,5 +1,7 @@
 # Wind3D
 
+This provides the actual code and more datas in [arXiv:2412.03888 [hep-lat]](https://arxiv.org/abs/2412.03888).
+
 We consider the winding number on numerical simulations.
 We propose an effective approach to give an approximate integer for
 ```math
@@ -24,7 +26,7 @@ Each directory contains
         - no "H": naive lattice definition of winding number
 - m_nb: Mathematica notebooks for small lattice size
 
-A parameter, $\eta$, is introduced for lattice improvement as [arXiv:2412.xxxxx](https://arxiv.org/abs/2412.xxxxx).
+A parameter, $\eta$, is introduced for lattice improvement as [arXiv:2412.03888 [hep-lat]](https://arxiv.org/abs/2412.03888).
 
 ## Sample code
 Use o-morikawa/Gaugefields.jl instead of the official repository, [Gaugefields.jl](https://github.com/akio-tomiya/Gaugefields.jl).
